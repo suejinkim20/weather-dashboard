@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="./assets/css/style.css" />
+
+    <title>Weather Dashboard</title>
+</head>
+<body>
+    <header class="jumbotron text-center">
+        <h1 class="display-4">Weather Dashboard</h1>
+        <p>A simple weather app for scheduling your outdoor activities</p>
+        <p id="currentDay" class="lead"></p>
+      </header>
+    <main>
+        <div class="row">
+            <!--Left Aside Area-->
+            <section class= "col-3">
+                <!--Search Box-->
+                <div class="card m-3">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="searchForACity" class="form-label">Search for a City</label>
+                            <div class="row">
+                                <input type="text" class="form-control col 10" id="cityInput">
+                                <a href="#" class="btn btn-primary col-2" id="searchBtn"><i class="fas fa-search"></i></a>
+                            </div>
+                          </div>
+                      </div>
+                </div>
+                <!--List of Cities?-->
+                <ul class="list-group m-3 cityList">
+                </ul>
+            </section>
+
+            <!--Weather Display Area-->
+            <section class= "col-8 m-3">
+                <!--Current Weather-->
+                <div class="card">
+                    <div class="card-header cityHeader"></div>            
+                    <div class="card-body">
+                        <ul class="list-group list-group">
+                            <li class="list-group-item">Temperature</li>
+                            <li class="list-group-item">Humidity</li>
+                            <li class="list-group-item">Wind Speed</li>
+                            <li class="list-group-item">UV Index</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                <!--5 day forecast-->
+                <h4 class="row my-4 mx-1">5 Day Forecast</h5>
+                <div class="row">
+                    <!--Day1-->
+                    <div class="card m-1">
+                        <div class="card-body">
+                            <h6>Date</h6>
+                            <p>weather icon</p>
+                            <p>Temp</p>
+                            <p>Humidity</p>
+                        </div>
+
+                    </div>
+                    <!--Day2-->
+                    <div class="card m-1">
+                        <div class="card-body">
+                            <h6>Date</h6>
+                            <p>weather icon</p>
+                            <p>Temp</p>
+                            <p>Humidity</p>
+                        </div>
+
+                    </div>
+                    <!--Day3-->
+                    <div class="card m-1">
+                        <div class="card-body">
+                            <h6>Date</h6>
+                            <p>weather icon</p>
+                            <p>Temp</p>
+                            <p>Humidity</p>
+                        </div>
+
+                    </div>
+                    <!--Day4-->
+                    <div class="card m-1">
+                        <div class="card-body">
+                            <h6>Date</h6>
+                            <p>weather icon</p>
+                            <p>Temp</p>
+                            <p>Humidity</p>
+                        </div>
+
+                    </div>
+                    <!--Day5-->
+                    <div class="card m-1">
+                        <div class="card-body">
+                            <h6>Date</h6>
+                            <p>weather icon</p>
+                            <p>Temp</p>
+                            <p>Humidity</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>  
+    <script src="./assets/js/script.js"></script>
+
+</body>
+</html>
