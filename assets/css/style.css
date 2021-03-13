@@ -1,0 +1,25 @@
+.exHigh {
+    background-color: #e958e9;
+    color: black;
+}
+
+.veryHigh {
+    background-color: #f17474;
+    color: black;
+}
+
+.high {
+    background-color: #fd933c;
+    color: black;
+}
+
+.med {
+    background-color: #fdfd74;
+    color: black;
+}
+
+.low {
+    background-color: #6bf1ba;
+    color: black;
+}
+

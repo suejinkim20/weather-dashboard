@@ -17,7 +17,7 @@ $(document).ready(function() {
     // get value of search box and set it to the variable "cityName"
         var cityInput = $(this).siblings("#cityInput").val();
         var cityName = cityInput.toLowerCase();
-        console.log(cityName);
+        //console.log(cityName);
 
 
     // create list element with the city name and append to the ul
@@ -71,56 +71,108 @@ $(document).ready(function() {
             .then(function(response) {
                 return response.json();
             })
+            
             .then(function(data) {
-                console.log(data);
+                //console.log(data);
+
                 // wx = weather; Des = description
-                var wxDes = $("<li>")
+                var wxDes = $("<li>");
                 wxDes.text("Current Weather: " + data.list[0].weather[0].description);
                 wxDes.addClass("list-group-item");
                 currentWxDisplay.append(wxDes);
 
 
                 //wx = weather; Temp = temperature
-                var wxTemp = $("<li>")
+                var wxTemp = $("<li>");
                 wxTemp.text("Temperature: " + data.list[0].main.temp + "°F");
                 wxTemp.addClass("list-group-item");
-                currentWxDisplay.append(wxTemp)
+                currentWxDisplay.append(wxTemp);
 
                 //wx = weather; Humid = humidity
-                var wxHumid = $("<li>")
+                var wxHumid = $("<li>");
                 wxHumid.text("Humidity: " + data.list[0].main.humidity + "%");
                 wxHumid.addClass("list-group-item");
-                currentWxDisplay.append(wxHumid)
+                currentWxDisplay.append(wxHumid);
 
                 //wx = weather; WindSpd = wind speed
-                var wxWindSpd = $("<li>")
+                var wxWindSpd = $("<li>");
                 wxWindSpd.text("Wind Speed: " + data.list[0].wind.speed + "mph");
                 wxWindSpd.addClass("list-group-item");
-                currentWxDisplay.append(wxWindSpd)
+                currentWxDisplay.append(wxWindSpd);
 
             // to get the UV Index you need lat/long
             // stack overflow: https://stackoverflow.com/questions/40981040/using-a-fetch-inside-another-fetch-in-javascript 
-                var cityLat = ""
-                var cityLong = ""
-                var UvIndexLink = ""    
+                var cityLat = data.city.coord.lat;
+                //console.log(cityLat);
+                var cityLon = data.city.coord.lon;
+                //console.log(cityLon);
+                var UvIndexLink = "http://api.openweathermap.org/data/2.5/uvi?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + apiKey;
+                //console.log(UvIndexLink);
             
-                return fetch(UvIndexLink + cityLat + cityLong)
-                })
+                return fetch(UvIndexLink);
+            })
 
-                .then(function(response) {
+            .then(function(response) {
                     return response.json();
-                })
+            })
                 
-                .then(function(data) {
+            .then(function(data) {
+                    console.log(data);
+
+                    //wx = weather; WindSpd = wind speed
+                    var wxUvIndx = $("<li>");
+                    var rawUvIndx =$("<span>")
+
+                    rawUvIndx.text(data.value);
+                    rawUvIndx.addClass("badge");
+                    wxUvIndx.text("UV Index: ");
+                    wxUvIndx.addClass("list-group-item");
                     
-                }
-                )
+                    // make value of the uv index an integer
+                    var intUvIndx = parseInt(data.value)
+                    console.log(typeof intUvIndx)
+
+                    if (intUvIndx >= 11) {
+                        rawUvIndx.removeClass("veryHigh");
+                        rawUvIndx.removeClass("high");
+                        rawUvIndx.removeClass("med");
+                        rawUvIndx.removeClass("low");
+                        rawUvIndx.addClass("exHigh");
+                    } else if (intUvIndx < 11 && intUvIndx >= 8) {
+                        rawUvIndx.removeClass("exHigh");
+                        rawUvIndx.removeClass("high");
+                        rawUvIndx.removeClass("med");
+                        rawUvIndx.removeClass("low");
+                        rawUvIndx.addClass("veryHigh");
+                    } else if (intUvIndx < 8 && intUvIndx >= 6) {
+                        rawUvIndx.removeClass("exHigh");
+                        rawUvIndx.removeClass("veryHigh");
+                        rawUvIndx.removeClass("med");
+                        rawUvIndx.removeClass("low");
+                        rawUvIndx.addClass("high");
+                    } else if (intUvIndx < 6 && intUvIndx >= 3) {
+                        rawUvIndx.removeClass("exHigh");
+                        rawUvIndx.removeClass("veryHigh");
+                        rawUvIndx.removeClass("high");
+                        rawUvIndx.removeClass("low");
+                        rawUvIndx.addClass("med");
+                    } else {
+                        rawUvIndx.removeClass("exHigh");
+                        rawUvIndx.removeClass("veryHigh");
+                        rawUvIndx.removeClass("high");
+                        rawUvIndx.removeClass("med");
+                        rawUvIndx.addClass("low");
+                    }
+
+                    wxUvIndx.append(rawUvIndx);
+                    currentWxDisplay.append(wxUvIndx)
+            }) 
 
         //UV Index... then add classes/colors based on if its favorable, moderate, or severe
 
 
         //5 day forecast
-        fetch()
+        //fetch()
 
     }
 
