@@ -5,6 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js">
+    </script>
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous"/>
     <link rel="stylesheet" href="./assets/css/style.css" />
@@ -34,8 +37,11 @@
                       </div>
                 </div>
                 <!--List of Cities?-->
-                <ul class="list-group m-3 cityList">
-                </ul>
+                <div class="container">
+                    <button type="button" class="btn btn-primary clearBtn mx-auto">Clear Cities</button>
+                    <ul class="list-group m-3 cityList">
+                    </ul>
+                </div>
             </section>
 
             <!--Weather Display Area-->
@@ -53,53 +59,32 @@
                 <h4 class="row my-4 mx-1">5 Day Forecast</h5>
                 <div class="row">
                     <!--Day1-->
-                    <div class="card col m-1">
-                        <div class="card-body">
-                            <h6>Date</h6>
-                            <p>Temp</p>
-                            <p>Humidity</p>
-                            <p>Wind Speed</p>
-                            <p>UV Index</p>
+                    <div class="card col m-0 p-1">
+                        <div class="card-body day1forecast">
                         </div>
 
                     </div>
                     <!--Day2-->
-                    <div class="card col m-1">
-                        <div class="card-body">
-                            <h6>Date</h6>
-                            <p>weather icon</p>
-                            <p>Temp</p>
-                            <p>Humidity</p>
+                    <div class="card col m-0 p-1">
+                        <div class="card-body day2forecast">
                         </div>
 
                     </div>
                     <!--Day3-->
-                    <div class="card col m-1">
-                        <div class="card-body">
-                            <h6>Date</h6>
-                            <p>weather icon</p>
-                            <p>Temp</p>
-                            <p>Humidity</p>
+                    <div class="card col m-0 p-1">
+                        <div class="card-body day3forecast">
                         </div>
 
                     </div>
                     <!--Day4-->
-                    <div class="card col m-1">
-                        <div class="card-body">
-                            <h6>Date</h6>
-                            <p>weather icon</p>
-                            <p>Temp</p>
-                            <p>Humidity</p>
+                    <div class="card col m-0 p-1">
+                        <div class="card-body day4forecast">
                         </div>
 
                     </div>
                     <!--Day5-->
-                    <div class="card col m-1">
-                        <div class="card-body">
-                            <h6>Date</h6>
-                            <p>weather icon</p>
-                            <p>Temp</p>
-                            <p>Humidity</p>
+                    <div class="card col m-0 p-1">
+                        <div class="card-body day5forecast">
                         </div>
 
                     </div>

@@ -6,40 +6,80 @@ $(document).ready(function() {
     var cityHeaderEl = $(".cityHeader");
     var currentWxDisplay = $(".currentWxInfo");
     var currentWxList = $(".currentWxList");
-    var wxDisplayArea = $(".wxDisplayArea");
-
+    var day1El = $(".day1forecast");
+    var day2El = $(".day2forecast");
+    var day3El = $(".day3forecast");
+    var day4El = $(".day4forecast");
+    var day5El = $(".day5forecast");
+    var cityInputEl = $("#cityInput");
 
     $("#searchBtn").on("click", function(event) {
         event.preventDefault();
         cityHeaderEl.empty();
         currentWxList.empty();
 
+        day1El.empty();
+        day2El.empty();
+        day3El.empty();
+        day4El.empty();
+        day5El.empty();
+
     // get value of search box and set it to the variable "cityName"
         var cityInput = $(this).siblings("#cityInput").val();
         var cityName = cityInput.toLowerCase();
-        //console.log(cityName);
+
+    // save city name in local storage?
+        function saveCities(citySaved){
+            var prevCities = JSON.parse(localStorage.getItem("cities")) || [];
+            if (!cityInput){ //or, if the status is 400?
+                alert("Please enter a city name.");
+                return;
+            } else if (prevCities.includes(citySaved)) {
+                console.log("duplicate");
+            } else {
+                prevCities.push(citySaved);
+            }
+            var newCities = JSON.stringify(prevCities);
+            localStorage.setItem("cities", newCities);
+            
+            var storedCities = JSON.parse(localStorage.getItem("cities"))
+            console.log(storedCities)
+            console.log(storedCities.length)
+            // create list element with the city name and append to the ul
+            
+            for (i = 0; i < storedCities.length; i++) {
+                var cityListItem = $("<li>");
+
+                console.log(storedCities[i])
+                cityListItem.text(storedCities[i].charAt(0).toUpperCase() + storedCities[i].slice(1)) 
+                // https://flaviocopes.com/how-to-uppercase-first-letter-javascript/
+    
+                cityListItem.addClass("list-group-item");
+                cityListItem.addClass("cityClick");
+        
+                cityListEl.append(cityListItem);
+            }
+    
+        }
+
+        saveCities(cityName);
 
 
-    // create list element with the city name and append to the ul
-        var cityListItem = $("<li>");
-        cityListItem.text(cityName.charAt(0).toUpperCase() + cityName.slice(1)) // https://flaviocopes.com/how-to-uppercase-first-letter-javascript/
-        cityListItem.addClass("list-group-item");
-        cityListItem.addClass("cityClick");
 
-        cityListEl.append(cityListItem);
+                    
+    
+
 
     //add text content to display area
         cityHeader = $("<h2>");
         cityHeader.text(cityName.charAt(0).toUpperCase() + cityName.slice(1));
-
         cityHeaderEl.append(cityHeader);
 
 
-    // save city name in local storage?
-
         getWxData(cityName);
-    
 
+        // clear the value of the search box
+        cityInputEl.val("");
     })
 
 
@@ -47,8 +87,14 @@ $(document).ready(function() {
         event.preventDefault();
 
         currentWxDisplay.empty();
+        day1El.empty();
+        day2El.empty();
+        day3El.empty();
+        day4El.empty();
+        day5El.empty();
 
-        console.log("city clicked")
+
+        //console.log("city clicked");
 
         var cityClickName = $(this).text();
         console.log(this);
@@ -68,114 +114,143 @@ $(document).ready(function() {
     
 
         fetch(currentWeatherLink)
+            
             .then(function(response) {
                 return response.json();
             })
-            
+
+            //Display current weather data to weather display area
             .then(function(data) {
-                //console.log(data);
+            // to get the info for the One Call Api you need lat/long
+            // stack overflow: https://stackoverflow.com/questions/40981040/using-a-fetch-inside-another-fetch-in-javascript 
+
+                var cityLat = data.city.coord.lat;
+                var cityLon = data.city.coord.lon;
+                var oneCall = "https://api.openweathermap.org/data/2.5/onecall?lat=" + cityLat + "&lon=" + cityLon + "&units=imperial&exclude=minutely,hourly&appid=" + apiKey;
+            
+                return fetch(oneCall);
+            })
+
+            .then(function(response) {
+                return response.json();
+            })
+
+            .then(function(data){
+                console.log(data);
 
                 // wx = weather; Des = description
                 var wxDes = $("<li>");
-                wxDes.text("Current Weather: " + data.list[0].weather[0].description);
+                wxDes.text("Current Weather: " + data.current.weather[0].description);
                 wxDes.addClass("list-group-item");
                 currentWxDisplay.append(wxDes);
 
-
                 //wx = weather; Temp = temperature
                 var wxTemp = $("<li>");
-                wxTemp.text("Temperature: " + data.list[0].main.temp + "°F");
+                wxTemp.text("Temperature: " + data.current.temp + "°F"); // "&#8457"
                 wxTemp.addClass("list-group-item");
                 currentWxDisplay.append(wxTemp);
 
                 //wx = weather; Humid = humidity
                 var wxHumid = $("<li>");
-                wxHumid.text("Humidity: " + data.list[0].main.humidity + "%");
+                wxHumid.text("Humidity: " + data.current.humidity + "%");
                 wxHumid.addClass("list-group-item");
                 currentWxDisplay.append(wxHumid);
 
                 //wx = weather; WindSpd = wind speed
                 var wxWindSpd = $("<li>");
-                wxWindSpd.text("Wind Speed: " + data.list[0].wind.speed + "mph");
+                wxWindSpd.text("Wind Speed: " + data.current.wind_speed + "mph");
                 wxWindSpd.addClass("list-group-item");
                 currentWxDisplay.append(wxWindSpd);
 
-            // to get the UV Index you need lat/long
-            // stack overflow: https://stackoverflow.com/questions/40981040/using-a-fetch-inside-another-fetch-in-javascript 
-                var cityLat = data.city.coord.lat;
-                //console.log(cityLat);
-                var cityLon = data.city.coord.lon;
-                //console.log(cityLon);
-                var UvIndexLink = "http://api.openweathermap.org/data/2.5/uvi?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + apiKey;
-                //console.log(UvIndexLink);
-            
-                return fetch(UvIndexLink);
-            })
+                //UV Index
+                var wxUvIndx = $("<li>");
+                var rawUvIndx =$("<span>")
 
-            .then(function(response) {
-                    return response.json();
-            })
+                rawUvIndx.text(data.current.uvi);
+                rawUvIndx.addClass("badge");
+                wxUvIndx.text("UV Index: ");
+                wxUvIndx.addClass("list-group-item");
                 
-            .then(function(data) {
-                    console.log(data);
+                // make value of the uv index an integer
+                var intUvIndx = parseInt(data.value);
 
-                    //wx = weather; WindSpd = wind speed
-                    var wxUvIndx = $("<li>");
-                    var rawUvIndx =$("<span>")
+                if (intUvIndx >= 11) {
+                    rawUvIndx.removeClass("veryHigh");
+                    rawUvIndx.removeClass("high");
+                    rawUvIndx.removeClass("med");
+                    rawUvIndx.removeClass("low");
+                    rawUvIndx.addClass("exHigh");
+                } else if (intUvIndx < 11 && intUvIndx >= 8) {
+                    rawUvIndx.removeClass("exHigh");
+                    rawUvIndx.removeClass("high");
+                    rawUvIndx.removeClass("med");
+                    rawUvIndx.removeClass("low");
+                    rawUvIndx.addClass("veryHigh");
+                } else if (intUvIndx < 8 && intUvIndx >= 6) {
+                    rawUvIndx.removeClass("exHigh");
+                    rawUvIndx.removeClass("veryHigh");
+                    rawUvIndx.removeClass("med");
+                    rawUvIndx.removeClass("low");
+                    rawUvIndx.addClass("high");
+                } else if (intUvIndx < 6 && intUvIndx >= 3) {
+                    rawUvIndx.removeClass("exHigh");
+                    rawUvIndx.removeClass("veryHigh");
+                    rawUvIndx.removeClass("high");
+                    rawUvIndx.removeClass("low");
+                    rawUvIndx.addClass("med");
+                } else {
+                    rawUvIndx.removeClass("exHigh");
+                    rawUvIndx.removeClass("veryHigh");
+                    rawUvIndx.removeClass("high");
+                    rawUvIndx.removeClass("med");
+                    rawUvIndx.addClass("low");
+                }
 
-                    rawUvIndx.text(data.value);
-                    rawUvIndx.addClass("badge");
-                    wxUvIndx.text("UV Index: ");
-                    wxUvIndx.addClass("list-group-item");
-                    
-                    // make value of the uv index an integer
-                    var intUvIndx = parseInt(data.value)
-                    console.log(typeof intUvIndx)
+                wxUvIndx.append(rawUvIndx);
+                currentWxDisplay.append(wxUvIndx); 
 
-                    if (intUvIndx >= 11) {
-                        rawUvIndx.removeClass("veryHigh");
-                        rawUvIndx.removeClass("high");
-                        rawUvIndx.removeClass("med");
-                        rawUvIndx.removeClass("low");
-                        rawUvIndx.addClass("exHigh");
-                    } else if (intUvIndx < 11 && intUvIndx >= 8) {
-                        rawUvIndx.removeClass("exHigh");
-                        rawUvIndx.removeClass("high");
-                        rawUvIndx.removeClass("med");
-                        rawUvIndx.removeClass("low");
-                        rawUvIndx.addClass("veryHigh");
-                    } else if (intUvIndx < 8 && intUvIndx >= 6) {
-                        rawUvIndx.removeClass("exHigh");
-                        rawUvIndx.removeClass("veryHigh");
-                        rawUvIndx.removeClass("med");
-                        rawUvIndx.removeClass("low");
-                        rawUvIndx.addClass("high");
-                    } else if (intUvIndx < 6 && intUvIndx >= 3) {
-                        rawUvIndx.removeClass("exHigh");
-                        rawUvIndx.removeClass("veryHigh");
-                        rawUvIndx.removeClass("high");
-                        rawUvIndx.removeClass("low");
-                        rawUvIndx.addClass("med");
-                    } else {
-                        rawUvIndx.removeClass("exHigh");
-                        rawUvIndx.removeClass("veryHigh");
-                        rawUvIndx.removeClass("high");
-                        rawUvIndx.removeClass("med");
-                        rawUvIndx.addClass("low");
-                    }
+                //5 day forecast
+                dailyForecast(1, day1El);
+                dailyForecast(2, day2El);
+                dailyForecast(3, day3El);
+                dailyForecast(4, day4El);
+                dailyForecast(5, day5El);
 
-                    wxUvIndx.append(rawUvIndx);
-                    currentWxDisplay.append(wxUvIndx)
-            }) 
+                function dailyForecast(dayNum, dayEl) {
+                    var index = parseInt(dayNum)
 
-        //UV Index... then add classes/colors based on if its favorable, moderate, or severe
+                    var dayDate = $("<p>");
+                    dayDate.text(moment.unix(data.daily[index].dt).format('ddd')); 
+                    dayEl.append(dayDate);
+
+                    var dayIcon = $("<img>");
+                    var iconcode = data.daily[index].weather[0].icon;
+                    dayIcon.attr("src", "http://openweathermap.org/img/w/" + iconcode + ".png");
+                    dayEl.append(dayIcon);
+
+                    var dayTemp = $("<p>");
+                    dayTemp.text("Temp: " + data.daily[index].temp.day + "°F");
+                    dayEl.append(dayTemp);
+
+                    var dayHumid = $("<p>");
+                    dayHumid.text("Humidity: " + data.daily[index].humidity + "%");
+                    dayEl.append(dayHumid);
+                }
 
 
-        //5 day forecast
-        //fetch()
+            })
+        }
 
-    }
+            // to get the current UV Index you need lat/long
+            // stack overflow: https://stackoverflow.com/questions/40981040/using-a-fetch-inside-another-fetch-in-javascript 
+            //Display current UV Index to weather display area, then add classes/colors based on if its favorable, moderate, or severe
+    
 
+    $(".clearBtn").click(function(){
+        localStorage.clear();
+        window.location.reload();
+
+    });
 
 })
 
