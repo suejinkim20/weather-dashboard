@@ -13,10 +13,34 @@ $(document).ready(function() {
     var day5El = $(".day5forecast");
     var cityInputEl = $("#cityInput");
 
+    function displayCitiesList(){
+        var cityListDisplay = JSON.parse(localStorage.getItem("cities"))
+        //console.log(cityListDisplay);
+        // Loop through an array: https://stackoverflow.com/questions/3010840/loop-through-an-array-in-javascript
+        if (cityListDisplay) {
+            for (i = 0; i < cityListDisplay.length; i++) {
+                //console.log(cityListDisplay[i]);
+
+                var cityListItem = $("<li>");
+
+                //ensures that the first letter of text is uppercase: https://flaviocopes.com/how-to-uppercase-first-letter-javascript/
+                cityListItem.text(cityListDisplay[i].charAt(0).toUpperCase() + cityListDisplay[i].slice(1))
+                cityListItem.addClass("list-group-item");
+                cityListItem.addClass("cityClick");
+        
+                cityListEl.append(cityListItem);
+            }
+        }
+    }
+    
+    displayCitiesList();
+
     $("#searchBtn").on("click", function(event) {
         event.preventDefault();
+
         cityHeaderEl.empty();
         currentWxList.empty();
+        currentWxDisplay.empty();
 
         day1El.empty();
         day2El.empty();
@@ -35,46 +59,30 @@ $(document).ready(function() {
                 alert("Please enter a city name.");
                 return;
             } else if (prevCities.includes(citySaved)) {
-                console.log("duplicate");
+                //console.log("duplicate");
             } else {
                 prevCities.push(citySaved);
             }
             var newCities = JSON.stringify(prevCities);
             localStorage.setItem("cities", newCities);
             
-            var storedCities = JSON.parse(localStorage.getItem("cities"))
-            console.log(storedCities)
-            console.log(storedCities.length)
+            //var storedCities = JSON.parse(localStorage.getItem("cities"))
+            //console.log(storedCities)
+            //console.log(storedCities.length)
             // create list element with the city name and append to the ul
             
-            for (i = 0; i < storedCities.length; i++) {
-                var cityListItem = $("<li>");
-
-                console.log(storedCities[i])
-                cityListItem.text(storedCities[i].charAt(0).toUpperCase() + storedCities[i].slice(1)) 
+            
+            var newCityListItem = $("<li>");
+                newCityListItem.text(citySaved.charAt(0).toUpperCase() + citySaved.slice(1)) 
                 // https://flaviocopes.com/how-to-uppercase-first-letter-javascript/
-    
-                cityListItem.addClass("list-group-item");
-                cityListItem.addClass("cityClick");
+                newCityListItem.addClass("list-group-item");
+                newCityListItem.addClass("cityClick");
+                cityListEl.append(newCityListItem);
         
-                cityListEl.append(cityListItem);
-            }
     
         }
 
         saveCities(cityName);
-
-
-
-                    
-    
-
-
-    //add text content to display area
-        cityHeader = $("<h2>");
-        cityHeader.text(cityName.charAt(0).toUpperCase() + cityName.slice(1));
-        cityHeaderEl.append(cityHeader);
-
 
         getWxData(cityName);
 
@@ -86,7 +94,10 @@ $(document).ready(function() {
     $(document).on("click", ".cityClick", function(event) {
         event.preventDefault();
 
+        cityHeaderEl.empty();
+        currentWxList.empty();
         currentWxDisplay.empty();
+
         day1El.empty();
         day2El.empty();
         day3El.empty();
@@ -106,9 +117,8 @@ $(document).ready(function() {
 
 
     function getWxData (cityChoice) {
-        currentWxDisplay.empty();
-
-        //fetch specific data from whatever city name is passed into this function
+        
+        //fetch specific lat/long data from whatever city name is passed into this function
         var apiKey = "7d54d1c60285cc74315fb3b5004b9765";
         var currentWeatherLink = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityChoice + "&units=imperial&appid=" + apiKey;
     
@@ -121,13 +131,20 @@ $(document).ready(function() {
 
             //Display current weather data to weather display area
             .then(function(data) {
+
             // to get the info for the One Call Api you need lat/long
             // stack overflow: https://stackoverflow.com/questions/40981040/using-a-fetch-inside-another-fetch-in-javascript 
+                console.log(data);
 
                 var cityLat = data.city.coord.lat;
                 var cityLon = data.city.coord.lon;
                 var oneCall = "https://api.openweathermap.org/data/2.5/onecall?lat=" + cityLat + "&lon=" + cityLon + "&units=imperial&exclude=minutely,hourly&appid=" + apiKey;
-            
+                
+                //add text content to display area
+                var cityHeader = $("<h2>");
+                cityHeader.text(data.city.name);
+                cityHeaderEl.append(cityHeader);
+
                 return fetch(oneCall);
             })
 
@@ -136,7 +153,7 @@ $(document).ready(function() {
             })
 
             .then(function(data){
-                console.log(data);
+                //console.log(data);
 
                 // wx = weather; Des = description
                 var wxDes = $("<li>");
@@ -237,14 +254,8 @@ $(document).ready(function() {
                     dayEl.append(dayHumid);
                 }
 
-
             })
-        }
-
-            // to get the current UV Index you need lat/long
-            // stack overflow: https://stackoverflow.com/questions/40981040/using-a-fetch-inside-another-fetch-in-javascript 
-            //Display current UV Index to weather display area, then add classes/colors based on if its favorable, moderate, or severe
-    
+    }   
 
     $(".clearBtn").click(function(){
         localStorage.clear();
