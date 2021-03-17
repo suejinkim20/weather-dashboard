@@ -54,7 +54,11 @@ $(document).ready(function() {
 
     // save city name in local storage?
         function saveCities(citySaved){
+
             var prevCities = JSON.parse(localStorage.getItem("cities")) || [];
+
+            // Remove duplicate values from JS array: https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
+
             if (!cityInput){ //or, if the status is 400?
                 alert("Please enter a city name.");
                 return;
@@ -66,9 +70,6 @@ $(document).ready(function() {
             var newCities = JSON.stringify(prevCities);
             localStorage.setItem("cities", newCities);
             
-            //var storedCities = JSON.parse(localStorage.getItem("cities"))
-            //console.log(storedCities)
-            //console.log(storedCities.length)
             // create list element with the city name and append to the ul
             
             
